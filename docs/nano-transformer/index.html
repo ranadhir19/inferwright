@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nano Transformer — LLM Inference Engine</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#101722; --panel2:#0d141e; --border:#223349;
+  --text:#e9edf4; --muted:#99a4ba; --faint:#6b7690;
+  --accent:#5eead4; --green:#7ee2a8; --amber:#f0b35e; --red:#f08787; --blue:#6ea8fe;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;font-size:16px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,14,19,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+nav.top .wrap{display:flex;align-items:center;gap:28px;height:60px}
+.brand{font-weight:700;font-size:17px;color:var(--text);letter-spacing:.2px}
+.brand span{color:var(--accent)}
+nav.top .links{margin-left:auto;display:flex;gap:20px;font-size:14px}
+nav.top .links a{color:var(--muted)}
+nav.top .links a:hover{color:var(--text)}
+.hero{padding:84px 0 60px;text-align:left;
+  background:radial-gradient(900px 380px at 20% 0%,rgba(94,234,212,.10),transparent 60%)}
+.hero .kicker{color:var(--accent);font-size:13px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.12;margin:0 0 20px;letter-spacing:-.5px;max-width:820px}
+.hero p.sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 0 34px}
+.btn{display:inline-block;background:var(--accent);color:#0a0e13;font-weight:700;
+  padding:12px 26px;border-radius:10px;font-size:15px}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);margin-left:12px}
+.install{margin-top:34px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.install code{background:#0d141e;border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;font-size:15px;color:var(--green)}
+.install span{color:var(--muted);font-size:14px}
+.stats{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap}
+.stats div b{font-size:26px;display:block}
+.stats div span{color:var(--muted);font-size:13px}
+section{padding:56px 0}
+h2.sec{font-size:28px;margin:0 0 8px;letter-spacing:-.3px}
+p.lead{color:var(--muted);max-width:760px;margin:0 0 30px}
+.cat{border:1px solid var(--border);border-radius:var(--radius);padding:28px;
+  margin-bottom:28px;background:var(--panel)}
+.cat h3{margin:0 0 4px;font-size:21px}
+.cat h3 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+.cat p.desc{color:var(--muted);margin:0 0 20px;max-width:720px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.hero h1{font-size:34px}}
+.card{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:22px;display:flex;flex-direction:column}
+.card h4{margin:0 0 6px;font-size:18px}
+.card h4 a{color:var(--text)}
+.card .tag{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.card p{color:var(--muted);font-size:14.5px;margin:0 0 16px;flex:1}
+.card .metric{font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:12px}
+.card .metric b{color:var(--green)}
+.proj-hero{padding:56px 0 30px}
+.proj-hero .kicker{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.proj-hero h1{font-size:38px;margin:0 0 10px;letter-spacing:-.4px}
+.proj-hero p.tagline{color:var(--muted);font-size:18px;margin:0 0 8px}
+.crumb{font-size:13px;color:var(--faint);margin-bottom:22px}
+.crumb a{color:var(--faint)}
+.block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;margin-bottom:22px}
+.block h2{font-size:20px;margin:0 0 12px}
+.block h2 .n{display:inline-block;width:28px;height:28px;border-radius:8px;background:var(--accent);
+  color:#0a0e13;font-size:15px;text-align:center;line-height:28px;margin-right:10px;font-weight:800}
+.block p{margin:0 0 12px;color:#c9d1e2}
+.block p:last-child{margin-bottom:0}
+.block ul,.block ol{margin:8px 0 0;padding-left:20px;color:#c9d1e2}
+.block li{margin-bottom:8px}
+.block code{background:#0d141e;border:1px solid var(--border);border-radius:5px;
+  padding:1px 6px;font-size:13.5px;color:var(--accent)}
+.diagram{background:#0c1219;border:1px solid var(--border);border-radius:12px;
+  padding:18px;overflow-x:auto;margin:6px 0 4px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.caption{font-size:13px;color:var(--faint);text-align:center;margin-top:8px}
+table.res{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+table.res th,table.res td{border:1px solid var(--border);padding:9px 12px;text-align:left}
+table.res th{background:var(--panel2);color:var(--muted);font-weight:600}
+.hl{color:var(--green);font-weight:700}
+img.chart{width:100%;border-radius:10px;border:1px solid var(--border);margin-top:10px}
+code.tree{background:#0c1219;border:1px solid var(--border);border-radius:10px;
+  display:block;padding:16px 18px;font-size:13.5px;color:#c9d1e2;overflow-x:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.pagenav{display:flex;justify-content:space-between;margin:40px 0 60px;gap:16px}
+.pagenav a{border:1px solid var(--border);border-radius:10px;padding:14px 20px;
+  color:var(--text);font-size:14px;background:var(--panel)}
+.pagenav a small{display:block;color:var(--faint);font-size:12px}
+footer{border-top:1px solid var(--border);padding:34px 0 48px;color:var(--faint);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav class="top"><div class="wrap">
+<a class="brand" href="../index.html">LLM Inference <span>Engine</span></a>
+<div class="links"><a href="../index.html#foundations">From First Principles</a><a href="../index.html#serving">Serving at Scale</a><a href="../index.html#efficiency">Efficiency Frontiers</a><a href="../index.html#governance">Agent Governance</a><a href="https://github.com/ranadhir19/llm-inference-engine/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/llm-inference-engine">GitHub ↗</a></div>
+</div></nav>
+<div class="wrap"><div class="proj-hero">
+<div class="crumb"><a href="../index.html">Lab</a> / <a href="../index.html#foundations">From First Principles</a> / 01</div>
+<div class="kicker" style="color:#5eead4">From First Principles</div>
+<h1>Nano Transformer</h1>
+<p class="tagline">A LLaMA-style decoder inference engine from scratch in numpy — verified bit-exact</p>
+</div>
+<div class="block"><h2><span class="n">1</span>The problem</h2><p>Every production LLM serving stack (vLLM, TensorRT-LLM, llama.cpp) rests on a small set of inference primitives: normalized residual blocks, rotary position embeddings, grouped-query attention, gated FFNs, and incremental decoding against a KV cache. These are usually hidden inside framework kernels, so it is hard to verify what each piece computes, what it costs, and why the KV cache matters so much.</p></div>
+<div class="block"><h2><span class="n">2</span>The current gap</h2><p>Most "build a transformer from scratch" material stops at a training loop for a toy model. It rarely (a) verifies each inference primitive against an independent reference implementation with assert-level tolerances, (b) proves that incremental cached decoding is numerically identical to a full forward pass, or (c) measures the actual latency and memory scaling of KV-cache vs recompute decoding on the same code.</p></div>
+<div class="block"><h2><span class="n">3</span>How the solution addresses it</h2><p><code>src/llm_inference_engine/transformer/model.py</code> implements the full inference path in ~350 lines of numpy with no ML framework:</p>
+<ul><li><code>TransformerConfig</code>, <code>RMSNorm</code>, <code>build_rope_cache</code> / <code>apply_rope</code> (LLaMA-style halves pairing), <code>repeat_kv</code> for GQA, SwiGLU FFN.</li><li><code>KVCache</code>: preallocated per-layer k/v buffers with <code>append</code>, <code>advance</code>, <code>get</code>, and an analytic <code>bytes_for</code> footprint helper.</li><li><code>TransformerModel.forward(tokens)</code> (causally masked full pass), <code>step(token, cache)</code> (single-token incremental decode attending over the cached prefix), <code>prefill</code>, and <code>generate</code> (greedy or temperature/top-k).</li><li><code>experiments/run_experiments.py</code> (seeded, <code>np.random.default_rng(7)</code>): four assert-level numerical verifications, latency benchmarks (median of 15 reps via <code>time.perf_counter</code>), analytic KV-memory accounting, and chart + markdown report generation into <code>results/</code>.</li></ul></div>
+<div class="block"><h2><span class="n">4</span>Architecture</h2>
+<div class="diagram"><svg viewBox="0 0 660 420" width="660" height="420" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8fa2c8"/>
+  </marker>
+  <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5eead4"/>
+  </marker>
+  <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7ee2a8"/>
+  </marker>
+</defs>
+
+<rect x="20" y="150" width="110" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="75.0" y="175.0" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="600">Tokens</text><text x="75.0" y="192.0" text-anchor="middle" fill="#99a4ba" font-size="11">embedding</text>
+<rect x="180" y="60" width="300" height="250" rx="9" fill="#0f1622" stroke="#3b4d75" stroke-width="1.5"/><text x="330.0" y="183.0" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="600"></text>
+<text x="330" y="86" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="700">Decoder block x N</text>
+<rect x="205" y="105" width="250" height="44" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="330.0" y="125.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">RMSNorm</text><text x="330.0" y="142.0" text-anchor="middle" fill="#99a4ba" font-size="11">pre-norm</text>
+<rect x="205" y="160" width="250" height="44" rx="9" fill="#1a2b26" stroke="#3f7a68" stroke-width="1.5"/><text x="330.0" y="180.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">GQA Attention</text><text x="330.0" y="197.0" text-anchor="middle" fill="#99a4ba" font-size="11">RoPE · KV cache</text>
+<rect x="205" y="215" width="250" height="44" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="330.0" y="235.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">RMSNorm + SwiGLU FFN</text><text x="330.0" y="252.0" text-anchor="middle" fill="#99a4ba" font-size="11">gated MLP</text>
+<text x="330" y="292" text-anchor="middle" fill="#99a4ba" font-size="11">residuals around both sublayers</text>
+<line x1="130" y1="177" x2="178" y2="177" stroke="#8fa2c8" stroke-width="1.6" marker-end="url(#arr)"/>
+<line x1="480" y1="177" x2="528" y2="177" stroke="#8fa2c8" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="530" y="150" width="110" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="585.0" y="175.0" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="600">Logits</text><text x="585.0" y="192.0" text-anchor="middle" fill="#99a4ba" font-size="11">lm_head</text>
+<rect x="180" y="340" width="300" height="56" rx="9" fill="#1b2340" stroke="#5eead4" stroke-width="1.5"/><text x="330.0" y="366.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">KV Cache</text><text x="330.0" y="383.0" text-anchor="middle" fill="#99a4ba" font-size="11">per-layer K/V buffers · append</text>
+<line x1="330" y1="260" x2="330" y2="338" stroke="#5eead4" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arra)"/>
+<text x="500" y="372" fill="#5eead4" font-size="11">incremental decode</text></svg></div>
+<div class="caption">Blueprint of the Nano Transformer architecture. See the repo for the full implementation.</div></div>
+<div class="block"><h2><span class="n">5</span>Results</h2>
+
+<table class="res"><tr><th>Check</th><th>Max abs diff</th><th>Verdict</th></tr>
+<tr><td>RMSNorm vs naive loop</td><td>4.77e-07</td><td>match</td></tr>
+<tr><td>RoPE vs complex-exponential reference</td><td>2.38e-07</td><td>match</td></tr>
+<tr><td>GQA vs tied full-head attention</td><td>0.0</td><td><b class="hl">bit-exact</b></td></tr>
+<tr><td>KV-cache decode vs full forward</td><td>0.0</td><td><b class="hl">bit-exact</b></td></tr></table>
+<table class="res"><tr><th>Seq len</th><th>Decode cached</th><th>Decode recompute</th><th>Speedup</th></tr>
+<tr><td>32</td><td>~1 ms/tok</td><td>~21 ms/tok</td><td>11.5x</td></tr>
+<tr><td>512</td><td>4.72 ms/tok</td><td>645.68 ms/tok</td><td><b class="hl">136.8x</b></td></tr></table>
+<p>KV-cache memory (fp16, analytic): 16 KiB at 32 tokens → 256 KiB at 512. Prefill: 13.5 ms at 32 → 557.3 ms at 512.</p>
+<img class="chart" src="../assets/charts/nano-transformer.png" alt="Nano Transformer experiment charts">
+<div class="caption">Generated by <code>experiments/run_experiments.py</code> — re-running reproduces these exactly.</div></div>
+<div class="block"><h2><span class="n">6</span>Insights</h2><ul><li><strong>The KV cache is the whole game for decode.</strong> Cached decode stays nearly flat (~1-5 ms/token) while full-context recompute grows steeply with sequence length (~21 ms at 32 tokens, ~646 ms at 512) — a 137x gap at seq 512 on identical hardware and code. Prefill is the price of admission; decode is where the cache pays off.</li><li><strong>Exactness is achievable, not approximate.</strong> Cached incremental decode reproduces full-forward logits bit-for-bit (max diff 0.0), because each cached key is rotated by RoPE at its own absolute position and attention is evaluated over the identical prefix in the identical order. There is no mathematical reason for "close enough" here.</li><li><strong>GQA is pure bookkeeping.</strong> With tied weights, grouped-query attention is bit-identical to full multi-head attention (diff 0.0) — repeating KV heads is a memory/compute tradeoff, not an approximation.</li><li><strong>KV memory is linear and plannable.</strong> 256 KiB at seq 512 for this nano config (fp16); the formula has no surprises, which is exactly why serving systems can budget it per request.</li><li><strong>Benchmark on a quiet machine if you want tight numbers.</strong> Medians over 15 reps still jittered ~2x run-to-run on a shared 2-core VM; the scaling shapes and orders of magnitude were stable, the last digits were not.</li></ul></div>
+<div class="block"><h2><span class="n">7</span>Implementation</h2>
+<code class="tree">src/llm_inference_engine/transformer/
+  model.py          # config, RMSNorm, RoPE, GQA, SwiGLU, KVCache, generate
+01-nano-transformer/
+  experiments/run_experiments.py   # 4 verifications + latency benchmarks
+  results/            # results.md + charts.png (generated)</code>
+<p style="margin-top:14px">Full source, tests, and experiment code: <a href="https://github.com/ranadhir19/llm-inference-engine/tree/main/01-nano-transformer/">01-nano-transformer/</a> ·
+Run: <code>cd 01-nano-transformer && python3 experiments/run_experiments.py</code></p></div>
+<div class="pagenav">
+<a href="../llm-mesh/index.html"><small>← Previous</small>10 · LLM Mesh</a>
+<a href="../paged-kv/index.html" style="text-align:right"><small>Next →</small>02 · Paged KV-Cache</a>
+</div></div>
+
+<footer><div class="wrap">
+<div>LLM Inference Engine — ten advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
+<div>Built by Ranadhir Ghosh · MIT License</div>
+</div></footer></body></html>

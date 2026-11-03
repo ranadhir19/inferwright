@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM Mesh — LLM Inference Engine</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#101722; --panel2:#0d141e; --border:#223349;
+  --text:#e9edf4; --muted:#99a4ba; --faint:#6b7690;
+  --accent:#5eead4; --green:#7ee2a8; --amber:#f0b35e; --red:#f08787; --blue:#6ea8fe;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;font-size:16px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,14,19,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+nav.top .wrap{display:flex;align-items:center;gap:28px;height:60px}
+.brand{font-weight:700;font-size:17px;color:var(--text);letter-spacing:.2px}
+.brand span{color:var(--accent)}
+nav.top .links{margin-left:auto;display:flex;gap:20px;font-size:14px}
+nav.top .links a{color:var(--muted)}
+nav.top .links a:hover{color:var(--text)}
+.hero{padding:84px 0 60px;text-align:left;
+  background:radial-gradient(900px 380px at 20% 0%,rgba(94,234,212,.10),transparent 60%)}
+.hero .kicker{color:var(--accent);font-size:13px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.12;margin:0 0 20px;letter-spacing:-.5px;max-width:820px}
+.hero p.sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 0 34px}
+.btn{display:inline-block;background:var(--accent);color:#0a0e13;font-weight:700;
+  padding:12px 26px;border-radius:10px;font-size:15px}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);margin-left:12px}
+.install{margin-top:34px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.install code{background:#0d141e;border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;font-size:15px;color:var(--green)}
+.install span{color:var(--muted);font-size:14px}
+.stats{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap}
+.stats div b{font-size:26px;display:block}
+.stats div span{color:var(--muted);font-size:13px}
+section{padding:56px 0}
+h2.sec{font-size:28px;margin:0 0 8px;letter-spacing:-.3px}
+p.lead{color:var(--muted);max-width:760px;margin:0 0 30px}
+.cat{border:1px solid var(--border);border-radius:var(--radius);padding:28px;
+  margin-bottom:28px;background:var(--panel)}
+.cat h3{margin:0 0 4px;font-size:21px}
+.cat h3 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+.cat p.desc{color:var(--muted);margin:0 0 20px;max-width:720px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.hero h1{font-size:34px}}
+.card{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:22px;display:flex;flex-direction:column}
+.card h4{margin:0 0 6px;font-size:18px}
+.card h4 a{color:var(--text)}
+.card .tag{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.card p{color:var(--muted);font-size:14.5px;margin:0 0 16px;flex:1}
+.card .metric{font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:12px}
+.card .metric b{color:var(--green)}
+.proj-hero{padding:56px 0 30px}
+.proj-hero .kicker{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.proj-hero h1{font-size:38px;margin:0 0 10px;letter-spacing:-.4px}
+.proj-hero p.tagline{color:var(--muted);font-size:18px;margin:0 0 8px}
+.crumb{font-size:13px;color:var(--faint);margin-bottom:22px}
+.crumb a{color:var(--faint)}
+.block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;margin-bottom:22px}
+.block h2{font-size:20px;margin:0 0 12px}
+.block h2 .n{display:inline-block;width:28px;height:28px;border-radius:8px;background:var(--accent);
+  color:#0a0e13;font-size:15px;text-align:center;line-height:28px;margin-right:10px;font-weight:800}
+.block p{margin:0 0 12px;color:#c9d1e2}
+.block p:last-child{margin-bottom:0}
+.block ul,.block ol{margin:8px 0 0;padding-left:20px;color:#c9d1e2}
+.block li{margin-bottom:8px}
+.block code{background:#0d141e;border:1px solid var(--border);border-radius:5px;
+  padding:1px 6px;font-size:13.5px;color:var(--accent)}
+.diagram{background:#0c1219;border:1px solid var(--border);border-radius:12px;
+  padding:18px;overflow-x:auto;margin:6px 0 4px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.caption{font-size:13px;color:var(--faint);text-align:center;margin-top:8px}
+table.res{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+table.res th,table.res td{border:1px solid var(--border);padding:9px 12px;text-align:left}
+table.res th{background:var(--panel2);color:var(--muted);font-weight:600}
+.hl{color:var(--green);font-weight:700}
+img.chart{width:100%;border-radius:10px;border:1px solid var(--border);margin-top:10px}
+code.tree{background:#0c1219;border:1px solid var(--border);border-radius:10px;
+  display:block;padding:16px 18px;font-size:13.5px;color:#c9d1e2;overflow-x:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.pagenav{display:flex;justify-content:space-between;margin:40px 0 60px;gap:16px}
+.pagenav a{border:1px solid var(--border);border-radius:10px;padding:14px 20px;
+  color:var(--text);font-size:14px;background:var(--panel)}
+.pagenav a small{display:block;color:var(--faint);font-size:12px}
+footer{border-top:1px solid var(--border);padding:34px 0 48px;color:var(--faint);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav class="top"><div class="wrap">
+<a class="brand" href="../index.html">LLM Inference <span>Engine</span></a>
+<div class="links"><a href="../index.html#foundations">From First Principles</a><a href="../index.html#serving">Serving at Scale</a><a href="../index.html#efficiency">Efficiency Frontiers</a><a href="../index.html#governance">Agent Governance</a><a href="https://github.com/ranadhir19/llm-inference-engine/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/llm-inference-engine">GitHub ↗</a></div>
+</div></nav>
+<div class="wrap"><div class="proj-hero">
+<div class="crumb"><a href="../index.html">Lab</a> / <a href="../index.html#serving">Serving at Scale</a> / 10</div>
+<div class="kicker" style="color:#6ea8fe">Serving at Scale</div>
+<h1>LLM Mesh</h1>
+<p class="tagline">Many specialized models, one routing layer: route, orchestrate, aggregate</p>
+</div>
+<div class="block"><h2><span class="n">1</span>The problem</h2><p>One frontier model for every request is the most expensive way to serve mixed workloads: you pay frontier prices for chit-chat, wait on a reasoning model's latency for a simple summary, and you inherit a single vendor's outage as your own. In practice, different models are best at different tasks, but there was no small reproducible harness that quantifies what a mesh buys you: how much cost routing saves, what parallel fan-out is worth, whether a router can learn the mapping on its own, and what happens when a specialist goes down mid-shift.</p></div>
+<div class="block"><h2><span class="n">2</span>The current gap</h2><p>Mesh discussions are usually architectural diagrams: boxes labeled "router" and "orchestrator" with no numbers attached. The questions that decide whether a mesh is worth building — quality vs cost vs latency tradeoffs per routing policy, the learning curve of an adaptive router, the blast radius of a model outage with and without failover — were argued qualitatively. llm-mesh simulates five specialized models with analytical quality/latency/cost profiles and measures the mesh machinery against a single-model baseline on identical seeded workloads.</p></div>
+<div class="block"><h2><span class="n">3</span>How the solution addresses it</h2><p><code>src/llm_inference_engine/llm_mesh/</code> implements the mesh components:</p>
+<ul><li><strong>Model registry</strong> (<code>models.py</code>) — five simulated specialists (<code>frontier-1</code>, <code>reasoner-r1</code>, <code>coder-cl</code>, <code>vision-qw</code>, <code>general-8b</code>), each with per-task quality means, per-token latency, and per-token price. Calls are sampled with seeded noise; no real LLM is invoked.</li><li><strong>Semantic router</strong> (<code>router.py</code>) — TF-IDF + class-centroid (Rocchio) classifier mapping raw queries to <code>reasoning</code> / <code>coding</code> / <code>vision</code> / <code>chat</code>, plus four routing policies: quality-first, cost-first, latency-first, balanced.</li><li><strong>Orchestrator</strong> (<code>orchestrator.py</code>) — decomposes a request into typed subtasks, dispatches sequentially or in parallel (wall-clock modeled as max latency + aggregation overhead), aggregates results, and fails over to the next-best model on <code>ModelDown</code>. Tool agents (e.g. a fraud-DB check) are simulated as fixed-latency stages.</li><li><strong>Self-improving router</strong> (<code>bandit.py</code>) — one UCB1 bandit per task type learning the best model from scored outcomes, plus a <code>DynamicSelector</code> that scores models from rolling observed quality/cost/latency means.</li><li><strong>Observability</strong> (<code>observability.py</code>) — append-only <code>Trace</code> of every invocation: routing decision, model, latency, tokens, cost, quality, failover provenance.</li><li><strong>Workflows</strong> (<code>workflows.py</code>) — the two canonical pipelines from the concept: fraud-risk insurance claims (vision extract -> reasoning -> tool DB check -> summary) and chart+report explanation (parallel vision + chat fan-out, reasoning combine).</li></ul></div>
+<div class="block"><h2><span class="n">4</span>Architecture</h2>
+<div class="diagram"><svg viewBox="0 0 600 360" width="600" height="360" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8fa2c8"/>
+  </marker>
+  <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5eead4"/>
+  </marker>
+  <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7ee2a8"/>
+  </marker>
+</defs>
+
+<rect x="230" y="14" width="140" height="52" rx="9" fill="#1a2b26" stroke="#3f7a68" stroke-width="1.5"/><text x="300.0" y="38.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">Semantic router</text><text x="300.0" y="55.0" text-anchor="middle" fill="#99a4ba" font-size="11">task type → best model</text>
+<rect x="14" y="110" width="106" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="67.0" y="135.0" text-anchor="middle" fill="#e9edf4" font-size="10" font-weight="600">frontier-1</text><text x="67.0" y="152.0" text-anchor="middle" fill="#99a4ba" font-size="11">generalist</text>
+<line x1="300" y1="66" x2="67" y2="108" stroke="#6ea8fe" stroke-width="1.6" marker-end="url(#arra)"/>
+<rect x="130" y="110" width="106" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="183.0" y="135.0" text-anchor="middle" fill="#e9edf4" font-size="10" font-weight="600">reasoner-r1</text><text x="183.0" y="152.0" text-anchor="middle" fill="#99a4ba" font-size="11">reasoning</text>
+<line x1="300" y1="66" x2="183" y2="108" stroke="#6ea8fe" stroke-width="1.6" marker-end="url(#arra)"/>
+<rect x="246" y="110" width="106" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="299.0" y="135.0" text-anchor="middle" fill="#e9edf4" font-size="10" font-weight="600">coder-cl</text><text x="299.0" y="152.0" text-anchor="middle" fill="#99a4ba" font-size="11">coding</text>
+<line x1="300" y1="66" x2="299" y2="108" stroke="#6ea8fe" stroke-width="1.6" marker-end="url(#arra)"/>
+<rect x="362" y="110" width="106" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="415.0" y="135.0" text-anchor="middle" fill="#e9edf4" font-size="10" font-weight="600">vision-qw</text><text x="415.0" y="152.0" text-anchor="middle" fill="#99a4ba" font-size="11">vision</text>
+<line x1="300" y1="66" x2="415" y2="108" stroke="#6ea8fe" stroke-width="1.6" marker-end="url(#arra)"/>
+<rect x="478" y="110" width="106" height="54" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="531.0" y="135.0" text-anchor="middle" fill="#e9edf4" font-size="10" font-weight="600">general-8b</text><text x="531.0" y="152.0" text-anchor="middle" fill="#99a4ba" font-size="11">cheap chat</text>
+<line x1="300" y1="66" x2="531" y2="108" stroke="#6ea8fe" stroke-width="1.6" marker-end="url(#arra)"/>
+<rect x="180" y="208" width="240" height="56" rx="9" fill="#1a2436" stroke="#6ea8fe" stroke-width="1.5"/><text x="300.0" y="234.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">Orchestrator</text><text x="300.0" y="251.0" text-anchor="middle" fill="#99a4ba" font-size="11">parallel fan-out · aggregate · failover</text>
+<line x1="67" y1="164" x2="300" y2="206" stroke="#99a4ba" stroke-width="1.6" marker-end="url(#arra)"/>
+<line x1="183" y1="164" x2="300" y2="206" stroke="#99a4ba" stroke-width="1.6" marker-end="url(#arra)"/>
+<line x1="299" y1="164" x2="300" y2="206" stroke="#99a4ba" stroke-width="1.6" marker-end="url(#arra)"/>
+<line x1="415" y1="164" x2="300" y2="206" stroke="#99a4ba" stroke-width="1.6" marker-end="url(#arra)"/>
+<line x1="531" y1="164" x2="300" y2="206" stroke="#99a4ba" stroke-width="1.6" marker-end="url(#arra)"/>
+<text x="300" y="300" text-anchor="middle" fill="#99a4ba" font-size="11">UCB1 router learns per-task winners; quality 0.943 at 0.38x the cost of one frontier model</text>
+<text x="300" y="322" text-anchor="middle" fill="#99a4ba" font-size="11">model outage → automatic failover, success stays 1.000</text></svg></div>
+<div class="caption">Blueprint of the LLM Mesh architecture. See the repo for the full implementation.</div></div>
+<div class="block"><h2><span class="n">5</span>Results</h2>
+
+<table class="res"><tr><th>400 mixed requests</th><th>Mean quality</th><th>Total cost</th><th>p95 latency</th></tr>
+<tr><td>frontier-1 only</td><td>0.9150</td><td>$5.00</td><td>4956 ms</td></tr>
+<tr><td><b>mesh (quality-first)</b></td><td><b class="hl">0.9430</b></td><td><b class="hl">$1.92</b></td><td>6395 ms</td></tr></table>
+<table class="res"><tr><th>Routing policy</th><th>Quality</th><th>Cost</th></tr>
+<tr><td>quality-first</td><td>0.944</td><td>$1.92</td></tr>
+<tr><td>balanced</td><td>0.847</td><td>$0.43</td></tr>
+<tr><td>latency-first</td><td>0.783</td><td>$0.33</td></tr>
+<tr><td>cost-first</td><td>0.782</td><td>$0.33</td></tr></table>
+<p>Seed 7, 3 runs byte-identical. Semantic router: 1.0000 accuracy on 24 held-out queries. Parallel orchestration: 1.64x speedup (p95 6947 ms → 4486 ms). UCB1 regret 0.1566 → 0.0296 over 3000 requests. Failover: 1.000 vs 0.750 success when vision-qw goes down. The quality win is honest about its price: mesh p95 latency is higher because quality-first routes reasoning to the slowest specialist — the routing policy chooses which axis you optimize.</p>
+<img class="chart" src="../assets/charts/llm-mesh.png" alt="LLM Mesh experiment charts">
+<div class="caption">Generated by <code>experiments/run_experiments.py</code> — re-running reproduces these exactly.</div></div>
+<div class="block"><h2><span class="n">6</span>Insights</h2><ul><li><strong>Specialization beats scale on cost, and slightly on quality.</strong> Routing each task to its best model cut cost 62% while <em>raising</em> mean quality 2.8 points versus the frontier-only baseline. The mesh tax is paid in tail latency when the best-quality model is also the slowest.</li><li><strong>Parallelism is the cheapest latency win in the mesh.</strong> 1.64x on a two-way fan-out with a 50 ms aggregation overhead — independent subtasks should never run sequentially.</li><li><strong>Adaptive routing converges without prior knowledge.</strong> The UCB1 router, starting from zero knowledge of the quality profiles, cut regret 5x over 3000 requests. Small oracle gaps plus reward noise mean it keeps exploring — tune the exploration constant if you want faster lock-in.</li><li><strong>Failover is the mesh's reliability story.</strong> A single-model outage is a 25% outage for static routing and a non-event for the mesh. The registry's health check is load-bearing infrastructure, not a nicety.</li><li><strong>Policy is a business decision, not a technical one.</strong> The Pareto front is real: quality-first costs 5.8x cost-first. Balanced sits in a genuinely useful middle ($0.43, 0.847).</li></ul></div>
+<div class="block"><h2><span class="n">7</span>Implementation</h2>
+<code class="tree">src/llm_inference_engine/llm_mesh/
+  models.py         # registry of 5 specialists: quality/latency/price profiles
+  router.py         # TF-IDF semantic router + 4 routing policies
+  orchestrator.py   # decomposition, parallel dispatch, failover
+  bandit.py         # UCB1 self-improving router
+  observability.py  # per-request traces: latency, tokens, cost
+  workflows.py      # fraud-claim + chart+report pipelines
+10-llm-mesh/
+  experiments/run_experiments.py   # 6 experiments, seeded (seed 7)
+  results/            # results.md + charts.png (generated)</code>
+<p style="margin-top:14px">Full source, tests, and experiment code: <a href="https://github.com/ranadhir19/llm-inference-engine/tree/main/10-llm-mesh/">10-llm-mesh/</a> ·
+Run: <code>cd 10-llm-mesh && python3 experiments/run_experiments.py</code></p></div>
+<div class="pagenav">
+<a href="../remit-drift/index.html"><small>← Previous</small>09 · Remit Drift</a>
+<a href="../nano-transformer/index.html" style="text-align:right"><small>Next →</small>01 · Nano Transformer</a>
+</div></div>
+
+<footer><div class="wrap">
+<div>LLM Inference Engine — ten advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
+<div>Built by Ranadhir Ghosh · MIT License</div>
+</div></footer></body></html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM Inference Engine — LLM Inference Engine</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#101722; --panel2:#0d141e; --border:#223349;
+  --text:#e9edf4; --muted:#99a4ba; --faint:#6b7690;
+  --accent:#5eead4; --green:#7ee2a8; --amber:#f0b35e; --red:#f08787; --blue:#6ea8fe;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;font-size:16px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,14,19,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+nav.top .wrap{display:flex;align-items:center;gap:28px;height:60px}
+.brand{font-weight:700;font-size:17px;color:var(--text);letter-spacing:.2px}
+.brand span{color:var(--accent)}
+nav.top .links{margin-left:auto;display:flex;gap:20px;font-size:14px}
+nav.top .links a{color:var(--muted)}
+nav.top .links a:hover{color:var(--text)}
+.hero{padding:84px 0 60px;text-align:left;
+  background:radial-gradient(900px 380px at 20% 0%,rgba(94,234,212,.10),transparent 60%)}
+.hero .kicker{color:var(--accent);font-size:13px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.12;margin:0 0 20px;letter-spacing:-.5px;max-width:820px}
+.hero p.sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 0 34px}
+.btn{display:inline-block;background:var(--accent);color:#0a0e13;font-weight:700;
+  padding:12px 26px;border-radius:10px;font-size:15px}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);margin-left:12px}
+.install{margin-top:34px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.install code{background:#0d141e;border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;font-size:15px;color:var(--green)}
+.install span{color:var(--muted);font-size:14px}
+.stats{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap}
+.stats div b{font-size:26px;display:block}
+.stats div span{color:var(--muted);font-size:13px}
+section{padding:56px 0}
+h2.sec{font-size:28px;margin:0 0 8px;letter-spacing:-.3px}
+p.lead{color:var(--muted);max-width:760px;margin:0 0 30px}
+.cat{border:1px solid var(--border);border-radius:var(--radius);padding:28px;
+  margin-bottom:28px;background:var(--panel)}
+.cat h3{margin:0 0 4px;font-size:21px}
+.cat h3 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+.cat p.desc{color:var(--muted);margin:0 0 20px;max-width:720px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.hero h1{font-size:34px}}
+.card{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:22px;display:flex;flex-direction:column}
+.card h4{margin:0 0 6px;font-size:18px}
+.card h4 a{color:var(--text)}
+.card .tag{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.card p{color:var(--muted);font-size:14.5px;margin:0 0 16px;flex:1}
+.card .metric{font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:12px}
+.card .metric b{color:var(--green)}
+.proj-hero{padding:56px 0 30px}
+.proj-hero .kicker{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.proj-hero h1{font-size:38px;margin:0 0 10px;letter-spacing:-.4px}
+.proj-hero p.tagline{color:var(--muted);font-size:18px;margin:0 0 8px}
+.crumb{font-size:13px;color:var(--faint);margin-bottom:22px}
+.crumb a{color:var(--faint)}
+.block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;margin-bottom:22px}
+.block h2{font-size:20px;margin:0 0 12px}
+.block h2 .n{display:inline-block;width:28px;height:28px;border-radius:8px;background:var(--accent);
+  color:#0a0e13;font-size:15px;text-align:center;line-height:28px;margin-right:10px;font-weight:800}
+.block p{margin:0 0 12px;color:#c9d1e2}
+.block p:last-child{margin-bottom:0}
+.block ul,.block ol{margin:8px 0 0;padding-left:20px;color:#c9d1e2}
+.block li{margin-bottom:8px}
+.block code{background:#0d141e;border:1px solid var(--border);border-radius:5px;
+  padding:1px 6px;font-size:13.5px;color:var(--accent)}
+.diagram{background:#0c1219;border:1px solid var(--border);border-radius:12px;
+  padding:18px;overflow-x:auto;margin:6px 0 4px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.caption{font-size:13px;color:var(--faint);text-align:center;margin-top:8px}
+table.res{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+table.res th,table.res td{border:1px solid var(--border);padding:9px 12px;text-align:left}
+table.res th{background:var(--panel2);color:var(--muted);font-weight:600}
+.hl{color:var(--green);font-weight:700}
+img.chart{width:100%;border-radius:10px;border:1px solid var(--border);margin-top:10px}
+code.tree{background:#0c1219;border:1px solid var(--border);border-radius:10px;
+  display:block;padding:16px 18px;font-size:13.5px;color:#c9d1e2;overflow-x:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.pagenav{display:flex;justify-content:space-between;margin:40px 0 60px;gap:16px}
+.pagenav a{border:1px solid var(--border);border-radius:10px;padding:14px 20px;
+  color:var(--text);font-size:14px;background:var(--panel)}
+.pagenav a small{display:block;color:var(--faint);font-size:12px}
+footer{border-top:1px solid var(--border);padding:34px 0 48px;color:var(--faint);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav class="top"><div class="wrap">
+<a class="brand" href="index.html">LLM Inference <span>Engine</span></a>
+<div class="links"><a href="index.html#foundations">From First Principles</a><a href="index.html#serving">Serving at Scale</a><a href="index.html#efficiency">Efficiency Frontiers</a><a href="index.html#governance">Agent Governance</a><a href="https://github.com/ranadhir19/llm-inference-engine/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/llm-inference-engine">GitHub ↗</a></div>
+</div></nav>
+<div class="hero"><div class="wrap">
+<div class="kicker">Portfolio · LLM Inference Systems</div>
+<h1>Nine systems for how LLMs actually run.</h1>
+<p class="sub">From a transformer built from scratch in numpy to the scheduling
+policies that decide what users feel — each project implements an advanced
+inference technique, benchmarks it with seeded experiments, and reports
+honest numbers. No GPUs required. No hand-waving.</p>
+<a class="btn" href="#foundations">Explore the systems</a>
+<a class="btn ghost" href="nano-transformer/index.html">Start from first principles →</a>
+<div class="install"><code>pip install llm-inference-lab</code><span>The full library — ten systems, one import.</span></div>
+<div class="stats">
+<div><b>10</b><span>implemented systems</span></div>
+<div><b>4</b><span>categories</span></div>
+<div><b>30+</b><span>experiments, all seeded</span></div>
+<div><b>100%</b><span>reproducible — one command each</span></div>
+</div></div></div>
+<section><div class="wrap">
+<h2 class="sec">Browse by category</h2>
+<p class="lead">From the math of a single decode step to the scheduling of a
+thousand concurrent requests. Pick a layer, then drill into any system.</p>
+
+<div class="cat" id="foundations">
+<h3><span class="dot" style="background:#5eead4"></span>From First Principles</h3>
+<p class="desc">Understand inference at the metal level: build the transformer yourself, then learn where the hardware wall actually is.</p>
+<div class="cards">
+<div class="card"><div class="tag">01 · Nano Transformer</div>
+<h4><a href="nano-transformer/index.html">A LLaMA-style decoder inference engine from scratch in numpy — verified bit-exact</a></h4>
+<p>Every production LLM serving stack (vLLM, TensorRT-LLM, llama.cpp) rests on a small set of inference primitives: normalized residual blocks, rotary position embeddings, g…</p>
+<div class="metric"><b>0.0</b> max diff KV-cache vs full forward · <b>137x</b> decode speedup @512</div></div>
+<div class="card"><div class="tag">07 · Roofline Analysis</div>
+<h4><a href="roofline/index.html">Per-op roofline model for inference: where the wall is, and what fusion moves</a></h4>
+<p>LLM serving has two latency regimes with opposite bottlenecks. Decode (one token at a time) feels slow because each step re-reads the entire weight matrix for a handful o…</p>
+<div class="metric">Decode <b>7/7 memory-bound</b> @0.65% peak · fused dequant+GEMM <b>1.83x</b></div></div></div></div>
+<div class="cat" id="serving">
+<h3><span class="dot" style="background:#6ea8fe"></span>Serving at Scale</h3>
+<p class="desc">The serving stack, layer by layer: memory management, latency hiding, architecture, and scheduling — each quantified.</p>
+<div class="cards">
+<div class="card"><div class="tag">02 · Paged KV-Cache</div>
+<h4><a href="paged-kv/index.html">vLLM-style paged block manager: quantifying fragmentation waste vs contiguous allocation</a></h4>
+<p>During autoregressive decoding, each sequence's KV cache grows token by token, but its final length is unknown at admission. A serving system must reserve GPU memory per …</p>
+<div class="metric"><b>1.9%</b> waste vs <b>81.5%</b> contiguous · <b>817</b> vs 488 concurrent</div></div>
+<div class="card"><div class="tag">03 · Speculative Decoding</div>
+<h4><a href="spec-decode/index.html">Draft + target speculative sampling: an analytical model validated by Monte Carlo</a></h4>
+<p>Vanilla autoregressive decoding is latency-bound: each token requires a full forward pass of the large target model, and tokens are generated strictly one at a time. This…</p>
+<div class="metric"><b>5.28x</b> best speedup · formula vs MC dev <b>0.018</b> tokens</div></div>
+<div class="card"><div class="tag">04 · Disaggregated Serving</div>
+<h4><a href="disagg-serve/index.html">Prefill/decode disaggregation simulator: TTFT vs transfer-cost tradeoffs, quantified</a></h4>
+<p>In a standard (colocated) LLM serving setup, the same workers handle both prefill (processing the prompt, compute-bound) and decode (generating tokens one by one, memory-…</p>
+<div class="metric"><b>2.4x</b> lower TTFT on long prompts · crossover at <b>~81</b> tokens</div></div>
+<div class="card"><div class="tag">08 · Scheduling Lab</div>
+<h4><a href="sched-lab/index.html">Continuous batching vs chunked prefill vs preemption: a scheduling shootout</a></h4>
+<p>How a serving engine schedules requests across GPU iterations decides the latency every user feels. A single 4k-token prompt prefetched in one iteration stalls every in-f…</p>
+<div class="metric"><b>56x</b> lower mean TTFT continuous vs static · <b>82.8%</b> lower worst-case iter</div></div>
+<div class="card"><div class="tag">10 · LLM Mesh</div>
+<h4><a href="llm-mesh/index.html">Many specialized models, one routing layer: route, orchestrate, aggregate</a></h4>
+<p>One frontier model for every request is the most expensive way to serve mixed workloads: you pay frontier prices for chit-chat, wait on a reasoning model's latency for a …</p>
+<div class="metric"><b>0.943</b> quality at <b>0.38x</b> the cost of a single frontier model</div></div></div></div>
+<div class="cat" id="efficiency">
+<h3><span class="dot" style="background:#f0b35e"></span>Efficiency Frontiers</h3>
+<p class="desc">Do more with less: squeeze quality out of fewer bits, and capacity out of sparse experts.</p>
+<div class="cards">
+<div class="card"><div class="tag">05 · Quantization Lab</div>
+<h4><a href="quant-lab/index.html">INT8/FP8/INT4 workbench with real perplexity degradation on a trained tiny LM</a></h4>
+<p>Serving an LLM is dominated by moving weights from memory to compute: a 70B model in fp16 needs ~140 GB just to hold the parameters, and every generated token streams tho…</p>
+<div class="metric">INT8 <b>lossless</b> (2.1131 vs 2.1130) · INT4-g32 <b>+0.036</b> @ 4.5 bits</div></div>
+<div class="card"><div class="tag">06 · MoE Router</div>
+<h4><a href="moe-router/index.html">Expert routing simulator: capacity factor, token dropping, expert parallelism</a></h4>
+<p>A mixture-of-experts (MoE) layer promises the capacity of a huge model at the compute cost of a small one: each token is processed by only top_k of E experts. In practice…</p>
+<div class="metric">Balanced gating drops <b>9.3%</b> vs <b>61%</b> skewed @CF=1.0</div></div></div></div>
+<div class="cat" id="governance">
+<h3><span class="dot" style="background:#f08787"></span>Agent Governance</h3>
+<p class="desc">The systems around the model: when agents drift from their remit, measure it per type and contain it with a policy engine.</p>
+<div class="cards">
+<div class="card"><div class="tag">09 · Remit Drift</div>
+<h4><a href="remit-drift/index.html">Divergence of remit in multi-agent systems: measured per type, governed by a policy engine</a></h4>
+<p>Agentic systems learn, plan, call tools, delegate, spawn subagents, and optimize objectives. Each mechanism can quietly expand behavior beyond the intended mandate: a cal…</p>
+<div class="metric">All <b>8 drift types</b> grow ungoverned · <b>0.000</b> max D(t) governed</div></div></div></div>
+</div></section>
+<section><div class="wrap">
+<h2 class="sec">How to read a project</h2>
+<p class="lead">Every project page follows the same spine:</p>
+<div class="cards">
+<div class="card"><h4>1 · Problem &amp; gap</h4><p>What breaks or costs too much in real inference stacks, and why the standard treatments don't settle it.</p></div>
+<div class="card"><h4>2 · Solution &amp; architecture</h4><p>The implemented technique, with a blueprint-style architecture diagram.</p></div>
+<div class="card"><h4>3 · Results &amp; insights</h4><p>Measured numbers from seeded experiments, plus what the numbers actually mean.</p></div>
+<div class="card"><h4>4 · Implementation</h4><p>The code layout — everything is implemented, tested, and reproducible.</p></div>
+</div></div></section>
+
+<footer><div class="wrap">
+<div>LLM Inference Engine — ten advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
+<div>Built by Ranadhir Ghosh · MIT License</div>
+</div></footer></body></html>

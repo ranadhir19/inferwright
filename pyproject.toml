@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-inference-lab"
+version = "0.1.0"
+description = "Advanced LLM inference systems from first principles: transformers, paged KV-cache, speculative decoding, disaggregated serving, quantization, MoE routing, roofline analysis, scheduling — implemented, benchmarked, reproducible"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Ranadhir Ghosh" }]
+keywords = ["llm", "inference", "transformer", "kv-cache", "quantization", "moe", "serving", "cuda", "roofline"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "numpy>=1.24",
+    "matplotlib>=3.6",
+]
+
+[project.optional-dependencies]
+dev = ["build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/ranadhir19/llm-inference-engine"
+Documentation = "https://ranadhir19.github.io/llm-inference-engine/"
+Repository = "https://github.com/ranadhir19/llm-inference-engine"
+
+[tool.setuptools.packages.find]
+where = ["src"]

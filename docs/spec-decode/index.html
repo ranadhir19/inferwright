@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Speculative Decoding — LLM Inference Engine</title>
+<style>
+:root{
+  --bg:#0a0e13; --panel:#101722; --panel2:#0d141e; --border:#223349;
+  --text:#e9edf4; --muted:#99a4ba; --faint:#6b7690;
+  --accent:#5eead4; --green:#7ee2a8; --amber:#f0b35e; --red:#f08787; --blue:#6ea8fe;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;font-size:16px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,14,19,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+nav.top .wrap{display:flex;align-items:center;gap:28px;height:60px}
+.brand{font-weight:700;font-size:17px;color:var(--text);letter-spacing:.2px}
+.brand span{color:var(--accent)}
+nav.top .links{margin-left:auto;display:flex;gap:20px;font-size:14px}
+nav.top .links a{color:var(--muted)}
+nav.top .links a:hover{color:var(--text)}
+.hero{padding:84px 0 60px;text-align:left;
+  background:radial-gradient(900px 380px at 20% 0%,rgba(94,234,212,.10),transparent 60%)}
+.hero .kicker{color:var(--accent);font-size:13px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.12;margin:0 0 20px;letter-spacing:-.5px;max-width:820px}
+.hero p.sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 0 34px}
+.btn{display:inline-block;background:var(--accent);color:#0a0e13;font-weight:700;
+  padding:12px 26px;border-radius:10px;font-size:15px}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--border);margin-left:12px}
+.install{margin-top:34px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.install code{background:#0d141e;border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;font-size:15px;color:var(--green)}
+.install span{color:var(--muted);font-size:14px}
+.stats{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap}
+.stats div b{font-size:26px;display:block}
+.stats div span{color:var(--muted);font-size:13px}
+section{padding:56px 0}
+h2.sec{font-size:28px;margin:0 0 8px;letter-spacing:-.3px}
+p.lead{color:var(--muted);max-width:760px;margin:0 0 30px}
+.cat{border:1px solid var(--border);border-radius:var(--radius);padding:28px;
+  margin-bottom:28px;background:var(--panel)}
+.cat h3{margin:0 0 4px;font-size:21px}
+.cat h3 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px}
+.cat p.desc{color:var(--muted);margin:0 0 20px;max-width:720px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.hero h1{font-size:34px}}
+.card{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+  padding:22px;display:flex;flex-direction:column}
+.card h4{margin:0 0 6px;font-size:18px}
+.card h4 a{color:var(--text)}
+.card .tag{font-size:12px;color:var(--faint);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.card p{color:var(--muted);font-size:14.5px;margin:0 0 16px;flex:1}
+.card .metric{font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:12px}
+.card .metric b{color:var(--green)}
+.proj-hero{padding:56px 0 30px}
+.proj-hero .kicker{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.proj-hero h1{font-size:38px;margin:0 0 10px;letter-spacing:-.4px}
+.proj-hero p.tagline{color:var(--muted);font-size:18px;margin:0 0 8px}
+.crumb{font-size:13px;color:var(--faint);margin-bottom:22px}
+.crumb a{color:var(--faint)}
+.block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;margin-bottom:22px}
+.block h2{font-size:20px;margin:0 0 12px}
+.block h2 .n{display:inline-block;width:28px;height:28px;border-radius:8px;background:var(--accent);
+  color:#0a0e13;font-size:15px;text-align:center;line-height:28px;margin-right:10px;font-weight:800}
+.block p{margin:0 0 12px;color:#c9d1e2}
+.block p:last-child{margin-bottom:0}
+.block ul,.block ol{margin:8px 0 0;padding-left:20px;color:#c9d1e2}
+.block li{margin-bottom:8px}
+.block code{background:#0d141e;border:1px solid var(--border);border-radius:5px;
+  padding:1px 6px;font-size:13.5px;color:var(--accent)}
+.diagram{background:#0c1219;border:1px solid var(--border);border-radius:12px;
+  padding:18px;overflow-x:auto;margin:6px 0 4px}
+.diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.caption{font-size:13px;color:var(--faint);text-align:center;margin-top:8px}
+table.res{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0}
+table.res th,table.res td{border:1px solid var(--border);padding:9px 12px;text-align:left}
+table.res th{background:var(--panel2);color:var(--muted);font-weight:600}
+.hl{color:var(--green);font-weight:700}
+img.chart{width:100%;border-radius:10px;border:1px solid var(--border);margin-top:10px}
+code.tree{background:#0c1219;border:1px solid var(--border);border-radius:10px;
+  display:block;padding:16px 18px;font-size:13.5px;color:#c9d1e2;overflow-x:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.pagenav{display:flex;justify-content:space-between;margin:40px 0 60px;gap:16px}
+.pagenav a{border:1px solid var(--border);border-radius:10px;padding:14px 20px;
+  color:var(--text);font-size:14px;background:var(--panel)}
+.pagenav a small{display:block;color:var(--faint);font-size:12px}
+footer{border-top:1px solid var(--border);padding:34px 0 48px;color:var(--faint);font-size:13.5px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+</style></head><body>
+<nav class="top"><div class="wrap">
+<a class="brand" href="../index.html">LLM Inference <span>Engine</span></a>
+<div class="links"><a href="../index.html#foundations">From First Principles</a><a href="../index.html#serving">Serving at Scale</a><a href="../index.html#efficiency">Efficiency Frontiers</a><a href="../index.html#governance">Agent Governance</a><a href="https://github.com/ranadhir19/llm-inference-engine/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/llm-inference-engine">GitHub ↗</a></div>
+</div></nav>
+<div class="wrap"><div class="proj-hero">
+<div class="crumb"><a href="../index.html">Lab</a> / <a href="../index.html#serving">Serving at Scale</a> / 03</div>
+<div class="kicker" style="color:#6ea8fe">Serving at Scale</div>
+<h1>Speculative Decoding</h1>
+<p class="tagline">Draft + target speculative sampling: an analytical model validated by Monte Carlo</p>
+</div>
+<div class="block"><h2><span class="n">1</span>The problem</h2><p>Vanilla autoregressive decoding is latency-bound: each token requires a full forward pass of the large target model, and tokens are generated strictly one at a time. This makes the per-token latency equal to the cost of the most expensive model you own, with no way to amortize it.</p></div>
+<div class="block"><h2><span class="n">2</span>The current gap</h2><p>Speculative decoding (draft a few tokens with a cheap model, verify them in one target pass) is known to speed up inference, but most teams deploy it with hand-picked draft lengths and no quantitative model of when it helps, when it is neutral, and when it actively <em>hurts</em>. Without a model, you cannot pick the draft length for your draft model quality, nor can you predict whether a given draft/target pair is worth the engineering effort.</p></div>
+<div class="block"><h2><span class="n">3</span>How the solution addresses it</h2><p>A numpy-only (CPU) simulator for the draft + target speculative sampling loop, built around the closed-form analytical model:</p>
+<ul><li>Expected accepted tokens per target forward pass: <code>E(k, alpha) = (1 - alpha^(k+1)) / (1 - alpha)</code>, where <code>k</code> is the draft length and <code>alpha</code> the per-token acceptance probability.</li><li>Expected wall-clock speedup vs vanilla AR: <code>S = E / (1 + k*c)</code>, where <code>c = (draft cost per token) / (target cost per token)</code>.</li><li>An optimal-k selector that maximizes <code>S</code> over candidate draft lengths (<code>k = 0</code>, i.e. plain AR, is always allowed, so it never recommends a slowdown).</li><li>A Monte Carlo token-level simulator of the geometric acceptance process that validates the formula empirically, plus wall-clock tokens/sec estimates from a target forward latency.</li></ul>
+<p>Everything is seeded (<code>np.random.default_rng(21)</code>) and runs twice with bit-identical headlines. Module: <code>src/llm_inference_engine/spec_decode/</code> (<code>expected_speedup</code>, <code>optimal_k</code>, <code>simulate</code>).</p></div>
+<div class="block"><h2><span class="n">4</span>Architecture</h2>
+<div class="diagram"><svg viewBox="0 0 580 310" width="580" height="310" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#8fa2c8"/>
+  </marker>
+  <marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5eead4"/>
+  </marker>
+  <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#7ee2a8"/>
+  </marker>
+</defs>
+
+<rect x="20" y="90" width="130" height="60" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="85.0" y="118.0" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="600">Draft model</text><text x="85.0" y="135.0" text-anchor="middle" fill="#99a4ba" font-size="11">cheap · fast</text>
+<rect x="200" y="90" width="150" height="60" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="275.0" y="118.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">k draft tokens</text><text x="275.0" y="135.0" text-anchor="middle" fill="#99a4ba" font-size="11">proposed</text>
+<line x1="150" y1="120" x2="198" y2="120" stroke="#8fa2c8" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="400" y="90" width="150" height="60" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="475.0" y="118.0" text-anchor="middle" fill="#e9edf4" font-size="13" font-weight="600">Target model</text><text x="475.0" y="135.0" text-anchor="middle" fill="#99a4ba" font-size="11">one verify pass</text>
+<line x1="350" y1="120" x2="398" y2="120" stroke="#8fa2c8" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="400" y="200" width="150" height="60" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="475.0" y="228.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">Accept / reject</text><text x="475.0" y="245.0" text-anchor="middle" fill="#99a4ba" font-size="11">per-token test</text>
+<line x1="475" y1="150" x2="475" y2="198" stroke="#8fa2c8" stroke-width="1.6" marker-end="url(#arr)"/>
+<rect x="200" y="200" width="150" height="60" rx="9" fill="#131b28" stroke="#3b4d75" stroke-width="1.5"/><text x="275.0" y="228.0" text-anchor="middle" fill="#e9edf4" font-size="12" font-weight="600">Output tokens</text><text x="275.0" y="245.0" text-anchor="middle" fill="#99a4ba" font-size="11">accepted + bonus</text>
+<line x1="400" y1="230" x2="352" y2="230" stroke="#7ee2a8" stroke-width="1.6" marker-end="url(#arrg)"/>
+<line x1="275" y1="260" x2="85" y2="260" stroke="#5eead4" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arra)"/>
+<text x="180" y="252" fill="#5eead4" font-size="11">E = (1−αᵏ⁺¹)/(1−α) tokens per target pass</text>
+<text x="180" y="282" fill="#99a4ba" font-size="11">speedup = E / (1 + k·c) — speculation is a bet on α</text></svg></div>
+<div class="caption">Blueprint of the Speculative Decoding architecture. See the repo for the full implementation.</div></div>
+<div class="block"><h2><span class="n">5</span>Results</h2>
+
+<table class="res"><tr><th>Scenario (c=0.1)</th><th>Optimal k</th><th>Speedup</th><th>tok/s vs 25.0 vanilla</th></tr>
+<tr><td>alpha=0.95</td><td>8</td><td><b class="hl">5.28x</b></td><td>—</td></tr>
+<tr><td>alpha=0.70</td><td>4</td><td>1.98x</td><td>49.5</td></tr>
+<tr><td>alpha=0.50</td><td>2</td><td>1.46x</td><td>36.5</td></tr>
+<tr><td>alpha=0.30</td><td>1</td><td>1.18x</td><td>29.5</td></tr>
+<tr><td>alpha=0.30, k=8 (too aggressive)</td><td>—</td><td><b>0.79x (slowdown)</b></td><td>19.8</td></tr></table>
+<p>Analytical model E = (1−α<sup>k+1</sup>)/(1−α), speedup = E/(1+k·c); validated against 120 Monte Carlo cells × 100k trials (max deviation 0.018 tokens). The selector never recommends a slowdown.</p>
+<img class="chart" src="../assets/charts/spec-decode.png" alt="Speculative Decoding experiment charts">
+<div class="caption">Generated by <code>experiments/run_experiments.py</code> — re-running reproduces these exactly.</div></div>
+<div class="block"><h2><span class="n">6</span>Insights</h2><ul><li><strong>Speculation is a bet on alpha.</strong> The acceptance probability dominates everything: at alpha=0.95 you get 5.3x; at alpha=0.3 you are fighting for 1.2x.</li><li><strong>Large k with low alpha HURTS.</strong> The denominator <code>1 + k*c</code> grows linearly with draft length while accepted tokens saturate at ~1/(1-alpha). Drafting 8 tokens at alpha=0.3 costs 1.8x the compute per cycle for only ~1.42 accepted tokens: net slowdown of ~21%.</li><li>**Optimal draft length grows with draft quality and shrinks with draft cost.** Cheap, accurate drafts justify k=7..8; mediocre or expensive drafts justify k=1..2 — and below some alpha threshold the optimum is k=0, i.e. do not speculate at all.</li><li>The closed form is exact for the geometric acceptance process (Monte Carlo agrees to within 0.018 tokens), so draft-length tuning can be done analytically from a measured alpha — no GPU required.</li></ul></div>
+<div class="block"><h2><span class="n">7</span>Implementation</h2>
+<code class="tree">src/llm_inference_engine/spec_decode/
+  model.py          # E(k,alpha), speedup, optimal-k selector
+  sim.py            # vectorized Monte Carlo of the accept/reject loop
+03-spec-decode/
+  experiments/run_experiments.py   # formula validation + k/alpha/c sweep
+  results/            # results.md + charts.png (generated)</code>
+<p style="margin-top:14px">Full source, tests, and experiment code: <a href="https://github.com/ranadhir19/llm-inference-engine/tree/main/03-spec-decode/">03-spec-decode/</a> ·
+Run: <code>cd 03-spec-decode && python3 experiments/run_experiments.py</code></p></div>
+<div class="pagenav">
+<a href="../paged-kv/index.html"><small>← Previous</small>02 · Paged KV-Cache</a>
+<a href="../disagg-serve/index.html" style="text-align:right"><small>Next →</small>04 · Disaggregated Serving</a>
+</div></div>
+
+<footer><div class="wrap">
+<div>LLM Inference Engine — nine advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
+<div>Built by Ranadhir Ghosh · MIT License</div>
+</div></footer></body></html>
