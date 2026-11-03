@@ -1,0 +1,129 @@
+{
+ "budget_scan": {
+  "budget_100000": {
+   "paged16": {
+    "waste_pct_agg": 2.169096162586845,
+    "max_concurrent": 261,
+    "admitted": 1405,
+    "rejected": 595
+   },
+   "contiguous": {
+    "waste_pct_agg": 78.80673481123097,
+    "max_concurrent": 48,
+    "admitted": 394,
+    "rejected": 1606
+   }
+  },
+  "budget_250000": {
+   "paged16": {
+    "waste_pct_agg": 1.7275341764172871,
+    "max_concurrent": 360,
+    "admitted": 1844,
+    "rejected": 156
+   },
+   "contiguous": {
+    "waste_pct_agg": 79.34459224728542,
+    "max_concurrent": 122,
+    "admitted": 967,
+    "rejected": 1033
+   }
+  },
+  "budget_500000": {
+   "paged16": {
+    "waste_pct_agg": 1.626912497851126,
+    "max_concurrent": 365,
+    "admitted": 2000,
+    "rejected": 0
+   },
+   "contiguous": {
+    "waste_pct_agg": 77.86336682506443,
+    "max_concurrent": 244,
+    "admitted": 1552,
+    "rejected": 448
+   }
+  }
+ },
+ "joint_250k": {
+  "spec_off": {
+   "k": 0,
+   "S": 1.0,
+   "paged16": {
+    "waste_pct_agg": 1.7275341764172871,
+    "max_concurrent": 360,
+    "admitted": 1844,
+    "rejected": 156
+   },
+   "contiguous": {
+    "waste_pct_agg": 79.34459224728542,
+    "max_concurrent": 122,
+    "admitted": 967,
+    "rejected": 1033
+   }
+  },
+  "a0.7_c0.1": {
+   "k": 4,
+   "S": 1.9807857142857144,
+   "paged16": {
+    "waste_pct_agg": 1.627628939084714,
+    "max_concurrent": 274,
+    "admitted": 1992,
+    "rejected": 8
+   },
+   "contiguous": {
+    "waste_pct_agg": 79.05112537827841,
+    "max_concurrent": 122,
+    "admitted": 1487,
+    "rejected": 513
+   }
+  },
+  "a0.85_c0.1": {
+   "k": 7,
+   "S": 2.8529783331801464,
+   "paged16": {
+    "waste_pct_agg": 1.626912497851126,
+    "max_concurrent": 249,
+    "admitted": 2000,
+    "rejected": 0
+   },
+   "contiguous": {
+    "waste_pct_agg": 78.96858811307393,
+    "max_concurrent": 122,
+    "admitted": 1677,
+    "rejected": 323
+   }
+  },
+  "a0.3_c0.1_opt": {
+   "k": 1,
+   "S": 1.1818181818181817,
+   "paged16": {
+    "waste_pct_agg": 1.6744637675836487,
+    "max_concurrent": 341,
+    "admitted": 1925,
+    "rejected": 75
+   },
+   "contiguous": {
+    "waste_pct_agg": 79.70437114373857,
+    "max_concurrent": 122,
+    "admitted": 1094,
+    "rejected": 906
+   }
+  },
+  "a0.3_k8_forced": {
+   "k": 8,
+   "S": 0.7936351722222222,
+   "paged16": {
+    "waste_pct_agg": 1.8011135298057601,
+    "max_concurrent": 381,
+    "admitted": 1809,
+    "rejected": 191
+   },
+   "contiguous": {
+    "waste_pct_agg": 80.39070232960972,
+    "max_concurrent": 122,
+    "admitted": 884,
+    "rejected": 1116
+   }
+  }
+ },
+ "base_ratio": 1.906928645294726
+}

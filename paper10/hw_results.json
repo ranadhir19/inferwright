@@ -1,0 +1,199 @@
+{
+ "k": 4,
+ "ngen": 48,
+ "nprompt": 6,
+ "plen": 32,
+ "lat_target_ms": 191.66004899989275,
+ "lat_draft_ms": 136.56810100019356,
+ "c_hat": 0.7125538249250368,
+ "prompts": [
+  {
+   "i": 0,
+   "vanilla_time_s": 11.827620129000024,
+   "spec_time_s": 18.7781083079999,
+   "vanilla_tps": 4.058297398502787,
+   "spec_tps": 2.5561680235676834,
+   "match": true,
+   "proposed": 72,
+   "accepted": 33,
+   "t_forwards": 36,
+   "d_forwards": 78,
+   "pos_prop": [
+    18,
+    18,
+    18,
+    18
+   ],
+   "pos_acc": [
+    12,
+    9,
+    6,
+    6
+   ],
+   "cycles": 18,
+   "emitted_total": 51
+  },
+  {
+   "i": 1,
+   "vanilla_time_s": 9.935529798000061,
+   "spec_time_s": 32.96258314099987,
+   "vanilla_tps": 4.831146499068625,
+   "spec_tps": 1.4561965545805824,
+   "match": true,
+   "proposed": 72,
+   "accepted": 32,
+   "t_forwards": 36,
+   "d_forwards": 78,
+   "pos_prop": [
+    18,
+    18,
+    18,
+    18
+   ],
+   "pos_acc": [
+    10,
+    10,
+    6,
+    6
+   ],
+   "cycles": 18,
+   "emitted_total": 50
+  },
+  {
+   "i": 2,
+   "vanilla_time_s": 17.260016712999914,
+   "spec_time_s": 41.774566798999786,
+   "vanilla_tps": 2.780993830895153,
+   "spec_tps": 1.1490244825506908,
+   "match": true,
+   "proposed": 80,
+   "accepted": 31,
+   "t_forwards": 40,
+   "d_forwards": 85,
+   "pos_prop": [
+    20,
+    20,
+    20,
+    20
+   ],
+   "pos_acc": [
+    11,
+    8,
+    7,
+    5
+   ],
+   "cycles": 20,
+   "emitted_total": 51
+  },
+  {
+   "i": 3,
+   "vanilla_time_s": 19.349757787999806,
+   "spec_time_s": 48.62166208899998,
+   "vanilla_tps": 2.480651206381937,
+   "spec_tps": 0.9872142978604463,
+   "match": true,
+   "proposed": 88,
+   "accepted": 30,
+   "t_forwards": 44,
+   "d_forwards": 93,
+   "pos_prop": [
+    22,
+    22,
+    22,
+    22
+   ],
+   "pos_acc": [
+    15,
+    5,
+    5,
+    5
+   ],
+   "cycles": 22,
+   "emitted_total": 52
+  },
+  {
+   "i": 4,
+   "vanilla_time_s": 19.22267266100016,
+   "spec_time_s": 52.16185769499998,
+   "vanilla_tps": 2.4970513126088134,
+   "spec_tps": 0.9202126251075042,
+   "match": true,
+   "proposed": 76,
+   "accepted": 30,
+   "t_forwards": 38,
+   "d_forwards": 79,
+   "pos_prop": [
+    19,
+    19,
+    19,
+    19
+   ],
+   "pos_acc": [
+    13,
+    9,
+    5,
+    3
+   ],
+   "cycles": 19,
+   "emitted_total": 49
+  },
+  {
+   "i": 5,
+   "vanilla_time_s": 17.369055589000254,
+   "spec_time_s": 28.06217440599994,
+   "vanilla_tps": 2.763535400876844,
+   "spec_tps": 1.7104875518747107,
+   "match": true,
+   "proposed": 56,
+   "accepted": 37,
+   "t_forwards": 28,
+   "d_forwards": 64,
+   "pos_prop": [
+    14,
+    14,
+    14,
+    14
+   ],
+   "pos_acc": [
+    10,
+    10,
+    9,
+    8
+   ],
+   "cycles": 14,
+   "emitted_total": 51
+  }
+ ],
+ "alpha_hat": 0.4346846846846847,
+ "tokens_per_target_forward": 1.2972972972972974,
+ "cycles": 111,
+ "emitted_total_incl_overshoot": 304,
+ "emp_tokens_per_cycle": 2.7387387387387387,
+ "alpha_eff": 0.6933949497577792,
+ "pos_prop": [
+  111,
+  111,
+  111,
+  111
+ ],
+ "pos_acc": [
+  71,
+  51,
+  38,
+  33
+ ],
+ "pos_accept_rate": [
+  0.6396396396396397,
+  0.4594594594594595,
+  0.34234234234234234,
+  0.2972972972972973
+ ],
+ "predicted_speedup_alpha_eff": 0.7113209328714761,
+ "vanilla_tps_agg": 3.032707348243889,
+ "spec_tps_agg": 1.2951914301603946,
+ "measured_speedup": 0.427074320544112,
+ "E_tokens_formula": 1.7414718632898012,
+ "predicted_speedup": 0.4523050602976478,
+ "deviation_measured_minus_predicted": -0.02523073975353579,
+ "all_match": true
+}

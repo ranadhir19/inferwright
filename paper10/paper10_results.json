@@ -1,0 +1,192 @@
+{
+ "trace_stats": {
+  "n_trace_valid": 1234065,
+  "n_used": 2000,
+  "mean_total": 747.4635,
+  "median_total": 582.5,
+  "p90_total": 1621.1000000000001,
+  "mean_request": 509.508,
+  "mean_response": 237.9555,
+  "min_total": 13,
+  "max_total": 2044
+ },
+ "trace_run": {
+  "B8": {
+   "waste_pct": 0.49617932846164453,
+   "max_concurrent": 1144,
+   "admitted": 1589,
+   "rejected": 411
+  },
+  "B16": {
+   "waste_pct": 1.069394734172813,
+   "max_concurrent": 1137,
+   "admitted": 1581,
+   "rejected": 419
+  },
+  "B32": {
+   "waste_pct": 2.160871606008088,
+   "max_concurrent": 1133,
+   "admitted": 1572,
+   "rejected": 428
+  },
+  "B64": {
+   "waste_pct": 4.264446262487082,
+   "max_concurrent": 1120,
+   "admitted": 1557,
+   "rejected": 443
+  },
+  "contiguous": {
+   "waste_pct": 64.02515707128778,
+   "max_concurrent": 488,
+   "admitted": 761,
+   "rejected": 1239
+  }
+ },
+ "trace_pred_waste": {
+  "B8": 0.4608322546622561,
+  "B16": 0.9845727093533414,
+  "B32": 2.0002753303964758,
+  "B64": 3.950678995846869
+ },
+ "trace_robustness": {
+  "paged16": {
+   "waste_pct": 1.0328271118324446,
+   "max_concurrent": 1210,
+   "admitted": 1440,
+   "rejected": 560
+  },
+  "contig": {
+   "waste_pct": 64.57086010514018,
+   "max_concurrent": 488,
+   "admitted": 642,
+   "rejected": 1358
+  }
+ },
+ "neg_paging": {
+  "all_max_len": {
+   "paged16": {
+    "waste_pct": 0.0,
+    "max_concurrent": 488,
+    "admitted": 488,
+    "rejected": 1512
+   },
+   "contig": {
+    "waste_pct": 0.0,
+    "max_concurrent": 488,
+    "admitted": 488,
+    "rejected": 1512
+   }
+  },
+  "all_373": {
+   "paged16": {
+    "waste_pct": 2.8645833333333335,
+    "max_concurrent": 1287,
+    "admitted": 2000,
+    "rejected": 0
+   },
+   "contig": {
+    "waste_pct": 81.787109375,
+    "max_concurrent": 488,
+    "admitted": 976,
+    "rejected": 1024
+   }
+  },
+  "low_load_200": {
+   "paged16": {
+    "waste_pct": 1.987135308982311,
+    "max_concurrent": 84,
+    "admitted": 200,
+    "rejected": 0
+   },
+   "contig": {
+    "waste_pct": 83.333984375,
+    "max_concurrent": 84,
+    "admitted": 200,
+    "rejected": 0
+   }
+  }
+ },
+ "alpha_min": {
+  "0.05": {
+   "1": 0.05000000000000021,
+   "2": 0.09160797830996176,
+   "3": 0.13068844196228352,
+   "4": 0.16677418012342243,
+   "5": 0.20005127881476353,
+   "6": 0.23079606291594862,
+   "7": 0.2592743859227681,
+   "8": 0.28572335104347835
+  },
+  "0.1": {
+   "1": 0.10000000000000014,
+   "2": 0.17082039324993686,
+   "3": 0.23303785488028955,
+   "4": 0.2871077523039075,
+   "5": 0.3342632423745201,
+   "6": 0.37565984732587576,
+   "7": 0.4122554810567286,
+   "8": 0.4448232486506226
+  },
+  "0.2": {
+   "1": 0.20000000000000012,
+   "2": 0.306225774829855,
+   "3": 0.38936507869004655,
+   "4": 0.45531601036803193,
+   "5": 0.5086603916420043,
+   "6": 0.5526076680395577,
+   "7": 0.589401822082009,
+   "8": 0.6206397381131443
+  }
+ },
+ "alpha_min_k1_check": {
+  "0.05": 2.0816681711721685e-16,
+  "0.1": 1.3877787807814457e-16,
+  "0.2": 1.1102230246251565e-16
+ },
+ "kstar_validation": {
+  "cells": 114,
+  "mismatches": 1
+ },
+ "alpha_min_mc_check": {
+  "-0.05": {
+   "alpha": 0.23710775230390752,
+   "mc_speedup": 0.9369142857142857,
+   "analytical": 0.9355848249092722
+  },
+  "0.05": {
+   "alpha": 0.3371077523039075,
+   "mc_speedup": 1.0728071428571428,
+   "analytical": 1.0728380623246916
+  }
+ },
+ "spec_negative_fraction": {
+  "0.05": 0.17424242424242425,
+  "0.1": 0.29419191919191917,
+  "0.2": 0.45075757575757575
+ },
+ "joint": {
+  "a0.7_c0.1": {
+   "k_star": 4,
+   "S": 1.9807857142857144,
+   "N_ratio": 1.6741803278688525,
+   "joint_ratio_vs_vanilla_contig": 3.3161924765807966
+  },
+  "a0.85_c0.1": {
+   "k_star": 7,
+   "S": 2.8529783331801464,
+   "N_ratio": 1.6741803278688525,
+   "joint_ratio_vs_vanilla_contig": 4.77640020124627
+  },
+  "a0.3_c0.1": {
+   "k_star": 1,
+   "S": 1.1818181818181817,
+   "N_ratio": 1.6741803278688525,
+   "joint_ratio_vs_vanilla_contig": 1.9785767511177346
+  }
+ },
+ "kstar_tie_check": {
+  "S1_exact": "5/4",
+  "S2_exact": "5/4",
+  "note": "k=1 and k=2 tie at alpha=0.5,c=0.2; brute-force returns smallest k, marginal scan differed only by floating-point epsilon on the tie"
+ }
+}
