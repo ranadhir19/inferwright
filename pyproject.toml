@@ -32,9 +32,9 @@ dependencies = [
 dev = ["build", "twine"]
 
 [project.urls]
-Homepage = "https://github.com/ranadhir19/llm-inference-engine"
-Documentation = "https://ranadhir19.github.io/llm-inference-engine/"
-Repository = "https://github.com/ranadhir19/llm-inference-engine"
+Homepage = "https://github.com/ranadhir19/inferwright"
+Documentation = "https://ranadhir19.github.io/inferwright/"
+Repository = "https://github.com/ranadhir19/inferwright"
 
 [tool.setuptools.packages.find]
 where = ["src"]

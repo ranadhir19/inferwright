@@ -1,9 +1,9 @@
-# LLM Inference Engine
+# inferwright
 
 Ten advanced LLM inference systems, implemented from first principles in
 numpy, benchmarked with seeded experiments, and reproducible on any laptop.
 
-**Landing site:** https://ranadhir19.github.io/llm-inference-engine/
+**Landing site:** https://ranadhir19.github.io/inferwright/
 · **Install:** `pip install llm-inference-lab`
 
 ## Watch it built

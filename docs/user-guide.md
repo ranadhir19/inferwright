@@ -1,4 +1,4 @@
-# LLM Inference Engine — User Guide
+# inferwright — User Guide
 
 Nine advanced inference systems, implemented from scratch in numpy, benchmarked
 with seeded experiments, and reproducible on any laptop. This guide gets you
@@ -302,6 +302,6 @@ Every experiment script is seeded and deterministic: run it twice, get
 byte-identical results (the quant-lab training run takes ~4 minutes; the rest
 finish in seconds). Results live in each project's `results/` (markdown +
 charts), and each project page on the
-[landing site](https://ranadhir19.github.io/llm-inference-engine/) walks
+[landing site](https://ranadhir19.github.io/inferwright/) walks
 through Problem → Gap → Solution → Architecture → Results → Insights →
 Implementation.

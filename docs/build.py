@@ -621,19 +621,19 @@ def nav(prefix=""):
     return f"""
 <nav class="top"><div class="wrap">
 <a class="brand" href="{prefix}index.html">LLM Inference <span>Engine</span></a>
-<div class="links">{cats}<a href="https://github.com/ranadhir19/llm-inference-engine/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/llm-inference-engine">GitHub ↗</a></div>
+<div class="links">{cats}<a href="https://github.com/ranadhir19/inferwright/blob/main/docs/user-guide.md">User Guide ↗</a><a href="https://github.com/ranadhir19/inferwright">GitHub ↗</a></div>
 </div></nav>"""
 
 def page_head(title):
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title} — LLM Inference Engine</title>
+<title>{title} — inferwright</title>
 <style>{CSS}</style></head><body>"""
 
 PAGE_FOOT = """
 <footer><div class="wrap">
-<div>LLM Inference Engine — ten advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
+<div>inferwright — ten advanced inference systems from first principles,<br>implemented in numpy, benchmarked, and reproducible.</div>
 <div>Built by Ranadhir Ghosh · MIT License</div>
 </div></footer></body></html>"""
 
@@ -655,7 +655,7 @@ def index_page():
 <h3><span class="dot" style="background:{c["color"]}"></span>{c["name"]}</h3>
 <p class="desc">{c["desc"]}</p>
 <div class="cards">{cards}</div></div>"""
-    return (page_head("LLM Inference Engine") + nav() + f"""
+    return (page_head("inferwright") + nav() + f"""
 <div class="hero"><div class="wrap">
 <div class="kicker">Portfolio · LLM Inference Systems</div>
 <h1>Nine systems for how LLMs actually run.</h1>
@@ -711,7 +711,7 @@ def project_page(p, prev_p, next_p, cat):
 <div class="block"><h2><span class="n">6</span>Insights</h2>{secs["Insights"]}</div>
 <div class="block"><h2><span class="n">7</span>Implementation</h2>
 <code class="tree">{p["impl_tree"]}</code>
-<p style="margin-top:14px">Full source, tests, and experiment code: <a href="https://github.com/ranadhir19/llm-inference-engine/tree/main/{p["repo"]}/">{p["repo"]}/</a> ·
+<p style="margin-top:14px">Full source, tests, and experiment code: <a href="https://github.com/ranadhir19/inferwright/tree/main/{p["repo"]}/">{p["repo"]}/</a> ·
 Run: <code>cd {p["repo"]} && python3 experiments/run_experiments.py</code></p></div>
 <div class="pagenav">
 <a href="../{prev_p["slug"]}/index.html"><small>← Previous</small>{prev_p["num"]} · {prev_p["name"]}</a>
